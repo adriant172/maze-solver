@@ -48,5 +48,3 @@ class Line:
             self.a.x, self.a.y,self.b.x, self.b.y, fill=color, width=2
             )
         canvas.pack(fill=BOTH, expand=1)
-
-         
