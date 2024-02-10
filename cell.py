@@ -3,7 +3,7 @@ from window import Point, Line
 
 class Cell:
     """This class will create a box that lives on the windows grid. It takes the X and Y coordinates of the top-left point"""
-    def __init__(self, window):
+    def __init__(self, window=None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -24,6 +24,8 @@ class Cell:
         return self._y1
     def draw(self,x1 ,y1 ,x2 ,y2 ,color):
         """Draw the walls of the cell"""
+        if self._win is None:
+            return
         self._x1 = x1
         self._x2 = x2
         self._y1 = y1
@@ -37,15 +39,27 @@ class Cell:
         if self.has_left_wall:
             left_line = Line(top_left_point, bottom_left_point )
             self._win.draw_line(left_line, color)
+        else:
+            left_line = Line(top_left_point, bottom_left_point )
+            self._win.draw_line(left_line, "white")
         if self.has_right_wall:
             right_line = Line(top_right_point, bottom_right_point)
             self._win.draw_line(right_line, color)
+        else:
+            right_line = Line(top_right_point, bottom_right_point)
+            self._win.draw_line(right_line, "white")
         if self.has_top_wall:
             top_line = Line(top_left_point,top_right_point)
             self._win.draw_line(top_line, color)
+        else:
+            top_line = Line(top_left_point,top_right_point)
+            self._win.draw_line(top_line, "white")
         if self.has_bottom_wall:
             bottom_line = Line(bottom_left_point, bottom_right_point)
             self._win.draw_line(bottom_line, color)
+        else:
+            bottom_line = Line(bottom_left_point, bottom_right_point)
+            self._win.draw_line(bottom_line, "white")
     def draw_move(self, to_cell, undo=False):
         if undo:
             line_color = "red"
