@@ -28,6 +28,7 @@ class Maze:
         self._create_cells()
         self._break_entrance_and_exit()
         self._break_walls_r(0,0)
+        self._reset_cells_visited()
     def _create_cells(self):
         for _ in range(self._num_cols):
             new_col = []
@@ -48,7 +49,7 @@ class Maze:
         self._animate()
     def _animate(self):
         self._win.redraw()
-        time.sleep(0.05)
+        time.sleep(0.02)
     def _break_entrance_and_exit(self):
         first_cell = self._cells[0][0]
         last_cell = self._cells[-1][-1]
@@ -65,13 +66,13 @@ class Maze:
             if j > 0:
                 if not self._cells[i][j - 1].visited:
                     to_visit.append((i, j - 1))
-            if j < self._num_cols - 1 :
+            if j < self._num_rows - 1 :
                 if not self._cells[i][j + 1].visited:
                     to_visit.append((i, j + 1))
             if i > 0:
                 if not self._cells[i - 1][j].visited:
                     to_visit.append((i - 1, j))
-            if i < self._num_rows - 1:
+            if i < self._num_cols - 1:
                 if not self._cells[i + 1][j].visited:
                     to_visit.append((i + 1, j))
             if not to_visit:
@@ -93,13 +94,7 @@ class Maze:
                 next_cell.has_left_wall = False
             self._draw_cell(next_i,next_j)
             self._break_walls_r(next_i,next_j)
-
-            
-
-        
-
-
-
-
-
-
+    def _reset_cells_visited(self):
+        for i, col in enumerate(self._cells):
+            for j, cell in enumerate(self._cells[i]):
+                self._cells[i][j].visited = False
