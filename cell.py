@@ -15,6 +15,7 @@ class Cell:
         self.center_x = None
         self.center_y = None
         self._win = window
+        self.visited = False
 
     def get_x1(self):
         """Getter method for the x1 coordinate"""
