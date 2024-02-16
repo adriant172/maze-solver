@@ -15,6 +15,7 @@ def main():
     cell_size_x = 50
     cell_size_y = 50
     maze = Maze(x1, y1, num_rows,num_cols,cell_size_x,cell_size_y, win)
+    maze.solve()
     
     # cell_1 = Cell(win)
     # cell_1.has_right_wall = False

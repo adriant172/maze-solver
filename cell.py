@@ -62,16 +62,42 @@ class Cell:
             bottom_line = Line(bottom_left_point, bottom_right_point)
             self._win.draw_line(bottom_line, "white")
     def draw_move(self, to_cell, undo=False):
+        """This draws a line from the middled of the 
+        current cell to the center of whatever cell 
+        was passed as parameter"""
+        if self._win is None:
+            return
         if undo:
-            line_color = "red"
+            line_color = "gray"
         else:
-            line_color = "grey"
+            line_color = "red"
         center_point = Point(self.center_x, self.center_y)
         to_cell_center = Point(to_cell.center_x, to_cell.center_y)
-        if to_cell.get_y1() != self._y1:
-            turn_point = Point(to_cell.center_x, self.center_y)
-            self._win.draw_line(Line(center_point, turn_point), line_color)
-            self._win.draw_line(Line(turn_point, to_cell_center), line_color)
+        # move left
+        if self._x1 > to_cell._x1:
+            edge_point = Point(self._x1, to_cell.center_y)
+            self._win.draw_line(Line(edge_point, center_point), line_color)
+            self._win.draw_line(Line(to_cell_center, edge_point), line_color)
+        # move right
+        elif self._x1 < to_cell._x1:
+            edge_point = Point(self._x2, to_cell.center_y)
+            self._win.draw_line(Line(center_point, edge_point), line_color)
+            self._win.draw_line(Line(edge_point, to_cell_center), line_color)
+        # move up
+        elif self._y1 > to_cell._y1:
+            edge_point = Point(self.center_x, self._y1)
+            self._win.draw_line(Line(center_point, edge_point), line_color)
+            self._win.draw_line(Line(edge_point, to_cell_center), line_color)
+        elif self._y1 < to_cell._y1:
+            edge_point = Point(self.center_x, self._y2)
+            self._win.draw_line(Line(center_point, edge_point), line_color)
+            self._win.draw_line(Line(edge_point, to_cell_center), line_color)
 
-        if to_cell.get_y1() == self._y1:  # Cells are in the same row
-            self._win.draw_line(Line(center_point,to_cell_center), line_color)
+
+        # if to_cell.get_y1() != self._y1:
+        #     turn_point = Point(to_cell.center_x, self.center_y)
+        #     self._win.draw_line(Line(center_point, turn_point), line_color)
+        #     self._win.draw_line(Line(turn_point, to_cell_center), line_color)
+
+        # if to_cell.get_y1() == self._y1:  # Cells are in the same row
+        #     self._win.draw_line(Line(center_point,to_cell_center), line_color)
