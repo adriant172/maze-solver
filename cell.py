@@ -31,8 +31,8 @@ class Cell:
         self._x2 = x2
         self._y1 = y1
         self._y2 = y2
-        self.center_x = self._x1 + (self._x2 - self._x1) / 2
-        self.center_y = self._y1 + (self._y2 - self._y1) / 2
+        self.center_x =  (self._x2 + self._x1) / 2
+        self.center_y = (self._y2 + self._y1) / 2
         top_left_point = Point(self._x1, self._y1)
         top_right_point = Point(self._x2, self._y1)
         bottom_left_point = Point(self._x1, self._y2)
@@ -75,23 +75,32 @@ class Cell:
         to_cell_center = Point(to_cell.center_x, to_cell.center_y)
         # move left
         if self._x1 > to_cell._x1:
-            edge_point = Point(self._x1, to_cell.center_y)
+            print(f"Actually im going left from cell at{to_cell._x1}, {to_cell._y1} to cell at {self._x1}, {self._y1}")
+            print("---------------------------------------------------------")
+            edge_point = Point(self._x1, self.center_y)
             self._win.draw_line(Line(edge_point, center_point), line_color)
-            self._win.draw_line(Line(to_cell_center, edge_point), line_color)
+            self._win.draw_line(Line(to_cell_center, Point(to_cell._x2, self.center_y)), line_color)
         # move right
         elif self._x1 < to_cell._x1:
-            edge_point = Point(self._x2, to_cell.center_y)
+            print(f"Actually im going right from cell at {to_cell._x1}, {to_cell._y1} to cell at {self._x1}, {self._y1}")
+            print("---------------------------------------------------------")
+            edge_point = Point(self._x2, self.center_y)
             self._win.draw_line(Line(center_point, edge_point), line_color)
-            self._win.draw_line(Line(edge_point, to_cell_center), line_color)
+            self._win.draw_line(Line(Point(to_cell._x1, to_cell.center_y), to_cell_center), line_color)
         # move up
         elif self._y1 > to_cell._y1:
+            print(f"Actually im going up from cell at {to_cell._x1}, {to_cell._y1} to cell at {self._x1}, {self._y1}")
+            print("---------------------------------------------------------")
             edge_point = Point(self.center_x, self._y1)
             self._win.draw_line(Line(center_point, edge_point), line_color)
-            self._win.draw_line(Line(edge_point, to_cell_center), line_color)
+            self._win.draw_line(Line(Point(to_cell.center_x, to_cell._y2), to_cell_center), line_color)
+        # move down
         elif self._y1 < to_cell._y1:
+            print(f"Actually im going down from cell at {to_cell._x1}, {to_cell._y1} to cell at {self._x1}, {self._y1}")
+            print("---------------------------------------------------------")
             edge_point = Point(self.center_x, self._y2)
             self._win.draw_line(Line(center_point, edge_point), line_color)
-            self._win.draw_line(Line(edge_point, to_cell_center), line_color)
+            self._win.draw_line(Line(Point(to_cell.center_x, to_cell._y1), to_cell_center), line_color)
 
 
         # if to_cell.get_y1() != self._y1:
