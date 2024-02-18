@@ -39,8 +39,8 @@ class Maze:
         if self._win is None:
             return
         current_cell = self._cells[i][j]
-        cell_x = self._x1 + j * self._cell_size_x
-        cell_y = self._y1 + i * self._cell_size_y
+        cell_x = self._x1 + i * self._cell_size_x
+        cell_y = self._y1 + j * self._cell_size_y
         current_cell.draw(
             cell_x,
             cell_y,
@@ -67,37 +67,40 @@ class Maze:
         current_cell.visited = True
         while True:
             to_visit = []
-            if j > 0:
-                if not self._cells[i][j - 1].visited:
-                    to_visit.append((i, j - 1))
-            if j < self._num_rows - 1:
-                if not self._cells[i][j + 1].visited:
-                    to_visit.append((i, j + 1))
+            # left
             if i > 0:
                 if not self._cells[i - 1][j].visited:
                     to_visit.append((i - 1, j))
+            # right
             if i < self._num_cols - 1:
                 if not self._cells[i + 1][j].visited:
                     to_visit.append((i + 1, j))
+            # up
+            if j > 0:
+                if not self._cells[i][j - 1].visited:
+                    to_visit.append((i, j - 1))
+            # down
+            if j < self._num_rows - 1:
+                if not self._cells[i][j + 1].visited:
+                    to_visit.append((i, j + 1))
             if not to_visit:
                 self._draw_cell(i, j)
                 return
             next_i, next_j = to_visit[random.randrange(len(to_visit))]
             next_cell = self._cells[next_i][next_j]
-            
-            if next_i < i:
-                current_cell.has_top_wall = False
-                next_cell.has_bottom_wall = False
-            elif next_i > i:
-                current_cell.has_bottom_wall = False
-                next_cell.has_top_wall = False
-            elif next_j < j:
-                current_cell.has_left_wall = False
-                next_cell.has_right_wall = False
-            else:  # next_j > j
+
+            if next_i > i:
                 current_cell.has_right_wall = False
                 next_cell.has_left_wall = False
-            # self._draw_cell(next_i, next_j)
+            if next_i < i:
+                current_cell.has_left_wall = False
+                next_cell.has_right_wall = False
+            if next_j > j:
+                current_cell.has_bottom_wall = False
+                next_cell.has_top_wall = False
+            if next_j < j:
+                current_cell.has_top_wall = False
+                next_cell.has_bottom_wall = False
             self._break_walls_r(next_i, next_j)
 
     def _reset_cells_visited(self):
@@ -115,55 +118,51 @@ class Maze:
             return True
         # left
         if (
-            j > 0
-            and not self._cells[i][j - 1].visited
+            i > 0
+            and not self._cells[i - 1][j].visited
             and not self._cells[i][j].has_left_wall
-            # and not self._cells[i - 1][j].has_right_wall
         ):
             print(f"Going left to cell at {i - 1}, {j}")
+            self._cells[i][j].draw_move(self._cells[i - 1][j])
+            result = self._solve_r(i - 1, j)
+            if result:
+                return result
+            self._cells[i - 1][j].draw_move(self._cells[i][j], undo=True)
+        # right
+        if (
+            i < self._num_cols - 1
+            and not self._cells[i + 1][j].visited
+            and not self._cells[i][j].has_right_wall
+        ):
+            print(f"Going right to cell at {i + 1}, {j} ")
+            self._cells[i][j].draw_move(self._cells[i + 1][j])
+            result = self._solve_r(i + 1, j)
+            if result:
+                return result
+            self._cells[i + 1][j].draw_move(self._cells[i][j], undo=True)
+        # top
+        if (
+            j > 0
+            and not self._cells[i][j - 1].visited
+            and not self._cells[i][j].has_top_wall
+        ):
+            print(f"Going up to cell at {i}, {j - 1}")
             self._cells[i][j].draw_move(self._cells[i][j - 1])
             result = self._solve_r(i, j - 1)
             if result:
                 return result
-            self._cells[i][j - 1].draw_move(self._cells[i][j], undo=True)
-        # right
+            self._cells[i][j - 1].draw_move(self._cells[i][j], undo=True)    
+        # bottom
         if (
-            j < self._num_cols - 1
+            j < self._num_rows - 1
             and not self._cells[i][j + 1].visited
-            and not self._cells[i][j].has_right_wall
-            # and not self._cells[i + 1][j].has_left_wall
+            and not self._cells[i][j].has_bottom_wall
         ):
-            print(f"Going right to cell at {i + 1}, {j} ")
+            print(f"Going down to cell at {i }, {j + 1}")
             self._cells[i][j].draw_move(self._cells[i][j + 1])
             result = self._solve_r(i, j + 1)
             if result:
                 return result
             self._cells[i][j + 1].draw_move(self._cells[i][j], undo=True)
-        # top
-        if (
-            i > 0
-            and not self._cells[i - 1][j].visited
-            and not self._cells[i][j].has_top_wall
-            # and not self._cells[i][j - 1].has_bottom_wall
-        ):
-            print(f"Going up to cell at {i}, {j - 1}")
-            self._cells[i][j].draw_move(self._cells[i - 1][j])
-            result = self._solve_r(i - 1, j)
-            if result:
-                return result
-            self._cells[i - 1][j].draw_move(self._cells[i][j], undo=True)    
-        # bottom
-        if (
-            i < self._num_rows - 1
-            and not self._cells[i + 1][j].visited
-            and not self._cells[i][j].has_bottom_wall
-            # and not self._cells[i][j + 1].has_top_wall
-        ):
-            print(f"Going down to cell at {i }, {j + 1}")
-            self._cells[i][j].draw_move(self._cells[i + 1][j])
-            result = self._solve_r(i + 1, j )
-            if result:
-                return result
-            self._cells[i + 1][j].draw_move(self._cells[i][j], undo=True)   
-        else:
-            return False
+
+        return False
